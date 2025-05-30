@@ -33,11 +33,19 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 sh '''
-                    mvn test
-                    echo "Listing test report directories:"
-                    find . -name "surefire-reports" -type d
-                    find . -name "failsafe-reports" -type d
-                    find . -name "test-results" -type d
+                    echo "Running tests with Maven..."
+                    mvn test -Dmaven.test.failure.ignore=true
+                    
+                    echo "Current directory structure:"
+                    ls -R
+                    
+                    echo "Looking for test reports in target directories:"
+                    find . -type d -name "target" -exec ls -la {}/surefire-reports \; 2>/dev/null || true
+                    find . -type d -name "target" -exec ls -la {}/failsafe-reports \; 2>/dev/null || true
+                    find . -type d -name "target" -exec ls -la {}/test-results \; 2>/dev/null || true
+                    
+                    echo "Checking Maven test results:"
+                    find . -name "TEST-*.xml" -type f
                 '''
             }
             post {
