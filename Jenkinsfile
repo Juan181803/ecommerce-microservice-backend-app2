@@ -40,9 +40,14 @@ pipeline {
                     ls -R
                     
                     echo "Looking for test reports in target directories:"
-                    find . -type d -name "target" -exec ls -la {}/surefire-reports \; 2>/dev/null || true
-                    find . -type d -name "target" -exec ls -la {}/failsafe-reports \; 2>/dev/null || true
-                    find . -type d -name "target" -exec ls -la {}/test-results \; 2>/dev/null || true
+                    for dir in $(find . -type d -name "target"); do
+                        echo "Checking $dir/surefire-reports"
+                        ls -la "$dir/surefire-reports" 2>/dev/null || true
+                        echo "Checking $dir/failsafe-reports"
+                        ls -la "$dir/failsafe-reports" 2>/dev/null || true
+                        echo "Checking $dir/test-results"
+                        ls -la "$dir/test-results" 2>/dev/null || true
+                    done
                     
                     echo "Checking Maven test results:"
                     find . -name "TEST-*.xml" -type f
