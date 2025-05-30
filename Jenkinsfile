@@ -32,7 +32,13 @@ pipeline {
         
         stage('Unit Tests') {
             steps {
-                sh 'mvn test'
+                sh '''
+                    mvn test
+                    echo "Listing test report directories:"
+                    find . -name "surefire-reports" -type d
+                    find . -name "failsafe-reports" -type d
+                    find . -name "test-results" -type d
+                '''
             }
             post {
                 always {
@@ -55,14 +61,13 @@ pipeline {
     }
     
     post {
-        always {
-            cleanWs()
-        }
         success {
             echo 'Pipeline de desarrollo completado exitosamente!'
+            cleanWs()
         }
         failure {
             echo 'Pipeline de desarrollo falló!'
+            cleanWs()
         }
     }
 }
